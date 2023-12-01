@@ -1,0 +1,20 @@
+FROM sapmachine:17-jdk-ubuntu
+
+ENV KAFKA_VERSION "3.6.0"
+ENV SCALA_VERSION "2.13"
+ENV ZOOKEEPER_HOST "zookeeper"
+ENV BROKER_ID 1
+
+RUN apt-get update && apt-get install -y wget
+RUN mkdir kafka
+WORKDIR kafka 
+RUN wget \
+    -O kafka-binaries.tgz \
+    https://downloads.apache.org/kafka/${KAFKA_VERSION}/kafka_${SCALA_VERSION}-${KAFKA_VERSION}.tgz \
+    && tar -xvzf kafka-binaries.tgz --strip 1 \
+    && rm kafka-binaries.tgz
+
+COPY ./kafka.properties /kafka/config/
+COPY ./start-kafka.sh  /kafka
+
+CMD ["sh", "/kafka/start-kafka.sh"]    
